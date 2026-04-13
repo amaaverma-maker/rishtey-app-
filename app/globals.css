@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --salmon:          #DC6B52;
+  --salmon-deep:     #B85240;
+  --salmon-muted:    #E8957F;
+  --salmon-blush:    #F2BDB1;
+  --salmon-whisper:  #FAE8E4;
+
+  --saffron:         #E8960C;
+  --saffron-pale:    #F9E4B0;
+  --gold-thread:     #C4882A;
+
+  --terracotta:      #A04E35;
+  --umber:           #3D1F14;
+  --umber-mid:       #6B3525;
+
+  --ivory:           #FDF6F0;
+  --ivory-warm:      #F9EFE7;
+  --parchment:       #F0E4D8;
+
+  /* Indian accent palette */
+  --rani:            #C94980;
+  --rani-pale:       #F5D0E3;
+  --haldi:           #E8C14A;
+  --haldi-deep:      #C9960A;
+  --peacock:         #1A7B8A;
+  --peacock-pale:    #C8E8EC;
+  --marigold:        #F47B20;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* scroll-behavior managed by Lenis */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--ivory);
+  color: var(--umber);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background-color: var(--salmon-blush);
+  color: var(--umber);
 }
