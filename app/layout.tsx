@@ -19,8 +19,22 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rishtey.us"),
   title: "Rishtey — Connections that last.",
   description: "Rishtey is a boutique South Asian matchmaking house. We meet you. We know you. Then we find them.",
+  openGraph: {
+    title: "Rishtey — Connections that last.",
+    description: "Rishtey is a boutique South Asian matchmaking house. We meet you. We know you. Then we find them.",
+    url: "https://rishtey.us",
+    siteName: "Rishtey",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rishtey — Connections that last.",
+    description: "Rishtey is a boutique South Asian matchmaking house. We meet you. We know you. Then we find them.",
+  },
 };
 
 export default function RootLayout({
