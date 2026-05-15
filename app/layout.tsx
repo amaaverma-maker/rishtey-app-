@@ -29,11 +29,20 @@ export const metadata: Metadata = {
     siteName: "Rishtey",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 800,
+        alt: "Rishtey — Connections that last.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Rishtey — Connections that last.",
     description: "Rishtey is a boutique South Asian matchmaking house. We meet you. We know you. Then we find them.",
+    images: ["/og-image.jpg"],
   },
 };
 
