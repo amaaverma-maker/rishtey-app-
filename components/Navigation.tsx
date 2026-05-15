@@ -52,6 +52,15 @@ export default function Navigation() {
 
   return (
     <>
+      <style>{`
+        @media (max-width: 767px) {
+          .nav-desktop-links, .nav-desktop-cta { display: none !important; }
+          .nav-hamburger { display: flex !important; }
+        }
+        @media (min-width: 768px) {
+          .nav-hamburger { display: none !important; }
+        }
+      `}</style>
       <nav
         style={{
           position: 'fixed',

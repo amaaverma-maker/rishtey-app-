@@ -142,6 +142,13 @@ export default function Hero() {
 
   return (
     <>
+      <style>{`
+        @media (max-width: 767px) {
+          .hero-layout { flex-direction: column !important; }
+          .hero-text { width: 100% !important; padding-right: 6vw !important; }
+          .hero-image { width: 100% !important; max-height: 340px !important; min-height: 260px !important; position: relative !important; }
+        }
+      `}</style>
       <section
         id="hero"
         style={{
