@@ -85,72 +85,62 @@ export default function Navigation() {
           </div>
         </a>
 
-        {/* Desktop nav links */}
-        {!isMobile && (
-          <div className="nav-desktop-links" style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleNav(e, link.href)}
-                style={{ fontFamily: 'var(--font-urbanist), sans-serif', fontWeight: 300, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#3D1F14', textDecoration: 'none', opacity: 0.8, transition: 'opacity 0.2s ease' }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.8')}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        )}
+        {/* Desktop nav links — hidden on mobile via CSS */}
+        <div className="nav-desktop-links" style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={(e) => handleNav(e, link.href)}
+              style={{ fontFamily: 'var(--font-urbanist), sans-serif', fontWeight: 300, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#3D1F14', textDecoration: 'none', opacity: 0.8, transition: 'opacity 0.2s ease' }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.8')}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
 
-        {/* Desktop CTA */}
-        {!isMobile && (
-          <a
-            className="nav-desktop-cta"
-            href="/biodata"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontFamily: 'var(--font-urbanist), sans-serif', fontWeight: 300, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#DC6B52', textDecoration: 'none', position: 'relative', paddingBottom: '2px' }}
-            className="nav-apply"
-          >
-            Apply →
-            <style>{`
-              .nav-apply::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 0;
-                height: 1px;
-                background: #DC6B52;
-                transition: width 0.3s ease;
-              }
-              .nav-apply:hover::after {
-                width: 100%;
-              }
-            `}</style>
-          </a>
-        )}
+        {/* Desktop CTA — hidden on mobile via CSS */}
+        <a
+          className="nav-desktop-cta nav-apply"
+          href="/biodata"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontFamily: 'var(--font-urbanist), sans-serif', fontWeight: 300, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#DC6B52', textDecoration: 'none', position: 'relative', paddingBottom: '2px' }}
+        >
+          Apply →
+          <style>{`
+            .nav-apply::after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 0;
+              height: 1px;
+              background: #DC6B52;
+              transition: width 0.3s ease;
+            }
+            .nav-apply:hover::after { width: 100%; }
+          `}</style>
+        </a>
 
-        {/* Mobile hamburger button */}
-        {isMobile && (
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="nav-hamburger"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'flex-end', justifyContent: 'center', position: 'relative', zIndex: 1001 }}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-          >
-            <span style={{ display: 'block', width: '24px', height: '1.5px', backgroundColor: '#3D1F14', transition: 'transform 0.35s ease', transform: menuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none', transformOrigin: 'center' }} />
-            <span style={{ display: 'block', width: '16px', height: '1.5px', backgroundColor: '#3D1F14', transition: 'opacity 0.2s ease', opacity: menuOpen ? 0 : 1 }} />
-            <span style={{ display: 'block', width: '24px', height: '1.5px', backgroundColor: '#3D1F14', transition: 'transform 0.35s ease', transform: menuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none', transformOrigin: 'center' }} />
-          </button>
-        )}
+        {/* Mobile hamburger — hidden on desktop via CSS */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="nav-hamburger"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', flexDirection: 'column', gap: '5px', alignItems: 'flex-end', justifyContent: 'center', position: 'relative', zIndex: 1001 }}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+        >
+          <span style={{ display: 'block', width: '24px', height: '1.5px', backgroundColor: '#3D1F14', transition: 'transform 0.35s ease', transform: menuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none', transformOrigin: 'center' }} />
+          <span style={{ display: 'block', width: '16px', height: '1.5px', backgroundColor: '#3D1F14', transition: 'opacity 0.2s ease', opacity: menuOpen ? 0 : 1 }} />
+          <span style={{ display: 'block', width: '24px', height: '1.5px', backgroundColor: '#3D1F14', transition: 'transform 0.35s ease', transform: menuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none', transformOrigin: 'center' }} />
+        </button>
       </nav>
 
       {/* Mobile fullscreen menu overlay */}
-      {isMobile && (
-        <div
+      <div
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
@@ -223,7 +213,6 @@ export default function Navigation() {
             Apply →
           </a>
         </div>
-      )}
     </>
   )
 }
