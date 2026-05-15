@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { scrollTo } from './SmoothScroll'
 import RangoliDivider from './svgs/RangoliDivider'
 import Image from 'next/image'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const headlineWords = ['Where Tradition', 'Meets the', 'Right Person.']
 
@@ -137,6 +138,8 @@ function ArchFrame() {
 }
 
 export default function Hero() {
+  const isMobile = useIsMobile()
+
   return (
     <>
       <section
@@ -150,18 +153,20 @@ export default function Hero() {
           alignItems: 'stretch',
         }}
       >
-        {/* Background — Star Compass top-right */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '-100px',
-            right: '-150px',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        >
-          <StarCompassBg />
-        </div>
+        {/* Background — Star Compass top-right (hidden on mobile) */}
+        {!isMobile && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '-100px',
+              right: '-150px',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          >
+            <StarCompassBg />
+          </div>
+        )}
 
         {/* Background gradient blob bottom-left */}
         <div
@@ -169,8 +174,8 @@ export default function Hero() {
             position: 'absolute',
             bottom: '-80px',
             left: '-100px',
-            width: '600px',
-            height: '400px',
+            width: isMobile ? '300px' : '600px',
+            height: isMobile ? '200px' : '400px',
             background: 'radial-gradient(ellipse at center, rgba(220,107,82,0.12) 0%, transparent 70%)',
             filter: 'blur(60px)',
             pointerEvents: 'none',
@@ -180,8 +185,10 @@ export default function Hero() {
 
         {/* Layout */}
         <div
+          className="hero-layout"
           style={{
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             width: '100%',
             minHeight: '100vh',
             position: 'relative',
@@ -189,14 +196,15 @@ export default function Hero() {
             alignItems: 'stretch',
           }}
         >
-          {/* Left column — 52% */}
+          {/* Left / top column — text */}
           <div
+            className="hero-text"
             style={{
-              width: '52%',
-              paddingLeft: '8vw',
-              paddingRight: '4vw',
-              paddingTop: '120px',
-              paddingBottom: '80px',
+              width: isMobile ? '100%' : '52%',
+              paddingLeft: isMobile ? '6vw' : '8vw',
+              paddingRight: isMobile ? '6vw' : '4vw',
+              paddingTop: isMobile ? '96px' : '120px',
+              paddingBottom: isMobile ? '48px' : '80px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -214,7 +222,7 @@ export default function Hero() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.35em',
                 color: '#DC6B52',
-                marginBottom: '36px',
+                marginBottom: isMobile ? '24px' : '36px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
@@ -235,10 +243,10 @@ export default function Hero() {
                 fontFamily: 'var(--font-cormorant), serif',
                 fontStyle: 'italic',
                 fontWeight: 600,
-                fontSize: 'clamp(68px, 7.5vw, 112px)',
-                lineHeight: 0.88,
+                fontSize: isMobile ? 'clamp(44px, 11vw, 68px)' : 'clamp(68px, 7.5vw, 112px)',
+                lineHeight: 0.9,
                 color: '#3D1F14',
-                marginBottom: '36px',
+                marginBottom: isMobile ? '24px' : '36px',
                 overflow: 'hidden',
               }}
             >
@@ -268,7 +276,7 @@ export default function Hero() {
                 height: '1px',
                 width: '48px',
                 background: '#DC6B52',
-                marginBottom: '28px',
+                marginBottom: isMobile ? '20px' : '28px',
                 transformOrigin: 'left',
                 opacity: 0.6,
               }}
@@ -282,11 +290,11 @@ export default function Hero() {
               style={{
                 fontFamily: 'var(--font-urbanist), sans-serif',
                 fontWeight: 300,
-                fontSize: '17px',
+                fontSize: isMobile ? '15px' : '17px',
                 lineHeight: 1.8,
                 color: 'rgba(61,31,20,0.65)',
                 maxWidth: '360px',
-                marginBottom: '52px',
+                marginBottom: isMobile ? '36px' : '52px',
               }}
             >
               Rishtey is a boutique matchmaking
@@ -299,7 +307,12 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.7 }}
-              style={{ display: 'flex', alignItems: 'center', gap: '40px', flexWrap: 'wrap' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: isMobile ? '24px' : '40px',
+                flexWrap: 'wrap',
+              }}
             >
               <a
                 href="/biodata"
@@ -314,7 +327,7 @@ export default function Hero() {
                   fontSize: '11px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.25em',
-                  padding: '15px 38px',
+                  padding: isMobile ? '14px 28px' : '15px 38px',
                   textDecoration: 'none',
                   transition: 'background-color 0.25s ease',
                 }}
@@ -359,16 +372,19 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Right column — 48% */}
+          {/* Right / bottom column — image */}
           <motion.div
+            className="hero-image"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
             style={{
-              width: '48%',
+              width: isMobile ? '100%' : '48%',
               position: 'relative',
-              minHeight: '100vh',
+              minHeight: isMobile ? '56vw' : '100vh',
+              maxHeight: isMobile ? '340px' : 'none',
               overflow: 'hidden',
+              flexShrink: 0,
             }}
           >
             <Image
@@ -378,10 +394,12 @@ export default function Hero() {
               style={{ objectFit: 'cover', objectPosition: 'center center' }}
               priority
             />
-            {/* Left fade into page */}
+            {/* Fade overlay */}
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to right, #FDF6F0 0%, rgba(253,246,240,0.3) 25%, transparent 50%), linear-gradient(to top, #FDF6F0 0%, transparent 15%)',
+              background: isMobile
+                ? 'linear-gradient(to bottom, #FDF6F0 0%, transparent 15%, transparent 85%, #FDF6F0 100%)'
+                : 'linear-gradient(to right, #FDF6F0 0%, rgba(253,246,240,0.3) 25%, transparent 50%), linear-gradient(to top, #FDF6F0 0%, transparent 15%)',
               pointerEvents: 'none',
             }} />
             {/* Warm salmon tint */}

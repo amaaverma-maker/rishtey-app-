@@ -59,3 +59,55 @@ body::before {
   background-color: var(--salmon-blush);
   color: var(--umber);
 }
+
+/* ── Hero responsive ── */
+@media (max-width: 767px) {
+  .hero-layout {
+    flex-direction: column !important;
+  }
+  .hero-text {
+    width: 100% !important;
+    padding-right: 6vw !important;
+    padding-top: 96px !important;
+    padding-bottom: 40px !important;
+  }
+  .hero-image {
+    width: 100% !important;
+    min-height: 56vw !important;
+    max-height: 340px !important;
+    position: relative !important;
+  }
+}
+
+/* ── Navigation responsive ── */
+@media (max-width: 767px) {
+  .nav-desktop-links,
+  .nav-desktop-cta {
+    display: none !important;
+  }
+  .nav-hamburger {
+    display: flex !important;
+  }
+}
+@media (min-width: 768px) {
+  .nav-hamburger {
+    display: none !important;
+  }
+}
+
+/* Biodata page responsive */
+@media (max-width: 768px) {
+  .biodata-badge {
+    display: none !important;
+  }
+
+  .biodata-header {
+    padding: 12px 16px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .biodata-header {
+    padding: 10px 14px !important;
+  }
+}
