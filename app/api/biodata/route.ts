@@ -1,7 +1,8 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   const data = await request.json()
 
   const {
@@ -11,18 +12,10 @@ export async function POST(request: NextRequest) {
     contactEmail, contactPhone,
   } = data
 
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-    tls: { rejectUnauthorized: false },
-  })
+  const submittedDate = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+  const firstName = fullName?.split(' ')[0] || 'there'
 
-  const html = `
+  const biodataHtml = `
     <div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #3D1F14;">
       <div style="background: #3D1F14; padding: 32px 40px; text-align: center;">
         <h1 style="color: #FDF6F0; font-style: italic; font-weight: 400; font-size: 28px; margin: 0;">
@@ -71,29 +64,56 @@ export async function POST(request: NextRequest) {
 
       <div style="background: #F0E4D8; padding: 20px 40px; text-align: center;">
         <p style="font-size: 11px; color: rgba(61,31,20,0.5); margin: 0; letter-spacing: 0.05em;">
-          Submitted via rishtey.app · ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+          Submitted via rishtey.us &middot; ${submittedDate}
         </p>
       </div>
     </div>
   `
 
-  const firstName = fullName?.split(' ')[0] || 'there'
+  const biodataText = `
+NEW BIODATA SUBMISSION — Rishtey Matchmaking
+Submitted: ${submittedDate}
+
+PERSONAL DETAILS
+Full Name: ${fullName || '—'}
+Age: ${age || '—'}
+Gender: ${gender || '—'}
+Marital Status: ${maritalStatus || '—'}
+Height: ${height || '—'}
+Mother Tongue: ${motherTongue || '—'}
+
+BACKGROUND
+Religion: ${religion || '—'}
+Caste / Community: ${caste || '—'}
+Education: ${education || '—'}
+Occupation: ${occupation || '—'}
+City: ${city || '—'}
+Country: ${country || '—'}
+
+ABOUT
+${aboutYou || '—'}
+
+PARTNER EXPECTATIONS
+${partnerExpectations || '—'}
+
+CONTACT
+Email: ${contactEmail || '—'}
+Phone: ${contactPhone || '—'}
+  `.trim()
+
   const confirmationHtml = `
     <div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #3D1F14; background: #FDF6F0;">
 
-      <!-- Header -->
       <div style="background: linear-gradient(135deg, #DC6B52 0%, #C94980 100%); padding: 48px 40px 40px; text-align: center;">
         <p style="color: rgba(253,246,240,0.7); font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; margin: 0 0 16px; font-family: Arial, sans-serif;">Rishtey Matchmaking</p>
-        <div style="font-size: 36px; margin-bottom: 16px;">🪔</div>
         <h1 style="color: #FDF6F0; font-style: italic; font-weight: 400; font-size: 34px; margin: 0 0 10px; line-height: 1.2;">
-          We're honoured to receive your biodata, ${firstName}.
+          We are honoured to receive your biodata, ${firstName}.
         </h1>
         <p style="color: rgba(253,246,240,0.75); font-size: 15px; margin: 0; line-height: 1.6; font-family: Arial, sans-serif;">
           Your journey towards a meaningful connection has begun.
         </p>
       </div>
 
-      <!-- Body -->
       <div style="padding: 48px 40px; background: #FDF6F0; border-left: 1px solid rgba(220,107,82,0.15); border-right: 1px solid rgba(220,107,82,0.15);">
 
         <p style="font-size: 16px; color: #3D1F14; line-height: 1.9; margin: 0 0 24px; font-family: Arial, sans-serif;">
@@ -105,32 +125,22 @@ export async function POST(request: NextRequest) {
         </p>
 
         <p style="font-size: 15px; color: rgba(61,31,20,0.75); line-height: 1.9; margin: 0 0 32px; font-family: Arial, sans-serif;">
-          A dedicated Rishtey matchmaker will personally review your profile and reach out to you within <strong style="color: #DC6B52;">48 hours</strong>. We take great care in understanding who you are — not just what's on paper, but the person behind it.
+          A dedicated Rishtey matchmaker will personally review your profile and reach out to you within <strong style="color: #DC6B52;">48 hours</strong>. We take great care in understanding who you are — not just what is on paper, but the person behind it.
         </p>
 
-        <!-- Divider with diya -->
         <div style="text-align: center; margin: 32px 0;">
           <div style="display: inline-block; width: 60px; height: 1px; background: rgba(220,107,82,0.3); vertical-align: middle;"></div>
-          <span style="font-size: 18px; margin: 0 12px;">✦</span>
+          <span style="font-size: 18px; margin: 0 12px; color: #DC6B52;">&#10022;</span>
           <div style="display: inline-block; width: 60px; height: 1px; background: rgba(220,107,82,0.3); vertical-align: middle;"></div>
         </div>
 
-        <!-- What to expect -->
         <div style="background: rgba(220,107,82,0.06); border-left: 3px solid #DC6B52; border-radius: 4px; padding: 24px 28px; margin-bottom: 32px;">
           <p style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #DC6B52; margin: 0 0 16px; font-family: Arial, sans-serif;">What happens next</p>
           <ul style="margin: 0; padding: 0; list-style: none; font-family: Arial, sans-serif;">
-            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
-              ✓ &nbsp;Your matchmaker reviews your biodata with care
-            </li>
-            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
-              ✓ &nbsp;We identify compatible profiles from our network
-            </li>
-            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
-              ✓ &nbsp;We reach out to you at <strong>${contactEmail}</strong> within 48 hours
-            </li>
-            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
-              ✓ &nbsp;Every step is kept strictly confidential
-            </li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">&#10003; &nbsp;Your matchmaker reviews your biodata with care</li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">&#10003; &nbsp;We identify compatible profiles from our network</li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">&#10003; &nbsp;We reach out to you at <strong>${contactEmail}</strong> within 48 hours</li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">&#10003; &nbsp;Every step is kept strictly confidential</li>
           </ul>
         </div>
 
@@ -140,44 +150,63 @@ export async function POST(request: NextRequest) {
 
       </div>
 
-      <!-- Footer -->
       <div style="background: #3D1F14; padding: 28px 40px; text-align: center;">
         <p style="font-style: italic; font-size: 15px; color: rgba(253,246,240,0.7); margin: 0 0 12px; line-height: 1.6;">
           "Every great love story begins with a single step."
         </p>
         <p style="font-size: 11px; color: rgba(253,246,240,0.35); margin: 0; letter-spacing: 0.12em; font-family: Arial, sans-serif;">
-          © ${new Date().getFullYear()} Rishtey Matchmaking &nbsp;·&nbsp; rishtey.us
+          &copy; ${new Date().getFullYear()} Rishtey Matchmaking &nbsp;&middot;&nbsp; rishtey.us
         </p>
       </div>
 
     </div>
   `
 
-  try {
-    // Primary email to rishteycontact@gmail.com with full biodata
-    await transporter.sendMail({
-      from: `"Rishtey" <${process.env.GMAIL_USER}>`,
-      to: 'rishteycontact@gmail.com',
-      replyTo: contactEmail || undefined,
-      subject: `New Biodata — ${fullName || 'Unknown'} (${city || ''}, ${country || ''})`,
-      html,
-    })
-  } catch (err) {
-    console.error('Biodata email send failed:', err)
+  const confirmationText = `
+Dear ${firstName},
+
+Thank you for trusting Rishtey with your story. We have received your biodata and a dedicated matchmaker will reach out to you within 48 hours.
+
+What happens next:
+- Your matchmaker reviews your biodata with care
+- We identify compatible profiles from our network
+- We reach out to you at ${contactEmail} within 48 hours
+- Every step is kept strictly confidential
+
+If you have any questions, simply reply to this email.
+
+Warm regards,
+The Rishtey Matchmaking Team
+rishtey.us
+  `.trim()
+
+  // Send biodata to the Rishtey team
+  const { error: biodataError } = await resend.emails.send({
+    from: 'Rishtey Matchmaking <hello@rishtey.us>',
+    to: 'rishteycontact@gmail.com',
+    replyTo: contactEmail || undefined,
+    subject: `New Biodata — ${fullName || 'Unknown'} (${city || ''}, ${country || ''})`,
+    html: biodataHtml,
+    text: biodataText,
+  })
+
+  if (biodataError) {
+    console.error('Biodata email failed:', biodataError)
     return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
   }
 
-  // Confirmation email — send separately so a failure here doesn't block the submission
+  // Send confirmation to the applicant — failure here does not block the submission
   if (contactEmail) {
-    try {
-      await transporter.sendMail({
-        from: `"Rishtey Matchmaking" <${process.env.GMAIL_USER}>`,
-        to: contactEmail,
-        subject: `We've received your biodata, ${fullName?.split(' ')[0] || 'there'} 🪔`,
-        html: confirmationHtml,
-      })
-    } catch (err) {
-      console.error('Confirmation email send failed:', err)
+    const { error: confirmError } = await resend.emails.send({
+      from: 'Rishtey Matchmaking <hello@rishtey.us>',
+      to: contactEmail,
+      replyTo: 'rishteycontact@gmail.com',
+      subject: `We have received your biodata, ${firstName}`,
+      html: confirmationHtml,
+      text: confirmationText,
+    })
+    if (confirmError) {
+      console.error('Confirmation email failed:', confirmError)
     }
   }
 
