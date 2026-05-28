@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import RangoliDivider from './svgs/RangoliDivider'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const CARD_COLORS = ['#DC6B52', '#C94980', '#E8960C']
 
@@ -12,27 +13,28 @@ const testimonials = [
       'Rishtey didn\'t just find me a match — they understood what I was looking for before I could even articulate it myself. Our families couldn\'t be happier.',
     name: 'Priya & Arjun',
     location: 'Toronto',
-    year: '2023',
+    year: '2025',
   },
   {
     quote:
       'After years of failed apps and endless aunty setups, Rishtey felt different from the very first conversation. Meaningful, personal, and completely unhurried.',
     name: 'Zara & Kabir',
     location: 'London',
-    year: '2024',
+    year: '2025',
   },
   {
     quote:
       'The matchmaker took time to truly know us — our values, our quirks, our families. When we met, it was as if someone had read our hearts.',
     name: 'Simran & Rohit',
     location: 'Mumbai',
-    year: '2024',
+    year: '2026',
   },
 ]
 
 export default function Testimonials() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
+  const isMobile = useIsMobile()
 
   return (
     <>
@@ -41,7 +43,7 @@ export default function Testimonials() {
         ref={ref}
         style={{
           backgroundColor: '#FDF6F0',
-          padding: '140px 40px 160px',
+          padding: isMobile ? '80px 20px 100px' : '140px 40px 160px',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -63,7 +65,7 @@ export default function Testimonials() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
-            style={{ textAlign: 'center', marginBottom: '90px' }}
+            style={{ textAlign: 'center', marginBottom: isMobile ? '48px' : '90px' }}
           >
             <div
               style={{
@@ -83,9 +85,9 @@ export default function Testimonials() {
                 fontFamily: 'var(--font-cormorant), serif',
                 fontStyle: 'italic',
                 fontWeight: 400,
-                fontSize: 'clamp(44px, 5vw, 68px)',
+                fontSize: isMobile ? 'clamp(32px, 8vw, 52px)' : 'clamp(44px, 5vw, 68px)',
                 color: '#3D1F14',
-                lineHeight: 1.05,
+                lineHeight: 1.1,
               }}
             >
               Unions we have had the honour of weaving.
@@ -96,8 +98,8 @@ export default function Testimonials() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '32px',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: isMobile ? '20px' : '32px',
             }}
           >
             {testimonials.map((t, i) => (
@@ -110,10 +112,10 @@ export default function Testimonials() {
                   backgroundColor: '#FDF6F0',
                   border: '1px solid rgba(220,107,82,0.18)',
                   borderTop: `3px solid ${CARD_COLORS[i % CARD_COLORS.length]}`,
-                  padding: '44px 36px 36px',
+                  padding: isMobile ? '32px 24px 28px' : '44px 36px 36px',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '28px',
+                  gap: '24px',
                   position: 'relative',
                 }}
               >
@@ -121,10 +123,10 @@ export default function Testimonials() {
                 <div
                   style={{
                     position: 'absolute',
-                    top: '20px',
-                    left: '32px',
+                    top: '16px',
+                    left: isMobile ? '20px' : '32px',
                     fontFamily: 'var(--font-cormorant), serif',
-                    fontSize: '72px',
+                    fontSize: isMobile ? '56px' : '72px',
                     lineHeight: 1,
                     color: `${CARD_COLORS[i % CARD_COLORS.length]}22`,
                     fontStyle: 'italic',
@@ -140,7 +142,7 @@ export default function Testimonials() {
                     fontFamily: 'var(--font-cormorant), serif',
                     fontStyle: 'italic',
                     fontWeight: 400,
-                    fontSize: '20px',
+                    fontSize: isMobile ? '18px' : '20px',
                     lineHeight: 1.7,
                     color: 'rgba(61,31,20,0.85)',
                     position: 'relative',

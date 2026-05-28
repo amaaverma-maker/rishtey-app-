@@ -6,43 +6,44 @@ import RangoliDivider from './svgs/RangoliDivider'
 
 const tiers = [
   {
-    name: 'Aangan',
-    urdu: 'Courtyard',
+    name: 'Rishtey Select',
+    urdu: 'For professionals beginning their matchmaking journey',
     accentColor: '#DC6B52',
     features: [
       '2 curated introductions',
-      'Personal matchmaker meeting',
+      'One-on-one matchmaker consultation',
       'Fully verified profile',
       'Member community access',
     ],
-    cta: 'Apply for Aangan',
+    cta: 'Begin a conversation',
   },
   {
-    name: 'Darbar',
-    urdu: 'Court',
+    name: 'Rishtey Signature',
+    urdu: 'A personalised, hands-on matchmaking experience',
     accentColor: '#E8960C',
     features: [
       '4 curated introductions',
-      'Profile consultation',
+      'Extended in-person profile session',
       'Priority matchmaker support',
       'Ongoing feedback sessions',
-      'All Aangan benefits',
+      'All Select benefits',
     ],
-    cta: 'Apply for Darbar',
+    cta: 'Begin a conversation',
     elevated: true,
   },
   {
-    name: 'Ananda',
-    urdu: 'Bliss',
+    name: 'Rishtey Premium',
+    urdu: 'White-glove, highly curated premium matchmaking',
     accentColor: '#C4882A',
     features: [
       'Unlimited introductions',
+      'Dedicated in-person meetings throughout your journey',
       'Dedicated concierge',
       'Family liaison service',
       'Pre-marital guidance',
       'Communication coaching',
     ],
-    cta: 'Apply for Ananda',
+    cta: 'Begin a conversation',
   },
 ]
 
@@ -102,10 +103,25 @@ export default function Membership() {
                 fontSize: 'clamp(48px, 5.5vw, 72px)',
                 color: '#FDF6F0',
                 lineHeight: 1,
+                marginBottom: '24px',
               }}
             >
-              Your season.
+              Begin your journey.
             </h2>
+            <p
+              style={{
+                fontFamily: 'var(--font-urbanist), sans-serif',
+                fontWeight: 300,
+                fontSize: '14px',
+                color: 'rgba(253,246,240,0.75)',
+                letterSpacing: '0.04em',
+                lineHeight: 1.7,
+                maxWidth: '420px',
+                margin: '0 auto',
+              }}
+            >
+              Package details are shared during your first complimentary conversation.
+            </p>
           </motion.div>
 
           {/* Tier cards */}
@@ -147,10 +163,10 @@ export default function Membership() {
                     fontFamily: 'var(--font-cormorant), serif',
                     fontStyle: 'italic',
                     fontWeight: 400,
-                    fontSize: '42px',
+                    fontSize: '26px',
                     color: tier.accentColor,
                     marginBottom: '4px',
-                    lineHeight: 1,
+                    lineHeight: 1.2,
                   }}
                 >
                   {tier.name}
@@ -160,12 +176,13 @@ export default function Membership() {
                 <div
                   style={{
                     fontFamily: 'var(--font-urbanist), sans-serif',
-                    fontWeight: 200,
-                    fontSize: '10px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.2em',
-                    color: `${tier.accentColor}99`,
+                    fontWeight: 300,
+                    fontSize: '12px',
+                    textTransform: 'none',
+                    letterSpacing: '0.02em',
+                    color: `rgba(253,246,240,0.5)`,
                     marginBottom: '16px',
+                    lineHeight: 1.5,
                   }}
                 >
                   {tier.urdu}
@@ -213,9 +230,11 @@ export default function Membership() {
                 </ul>
 
                 {/* CTA */}
-                <button
+                <a
+                  href="/biodata"
                   style={{
                     marginTop: '36px',
+                    display: 'block',
                     width: '100%',
                     padding: '14px 20px',
                     backgroundColor: 'transparent',
@@ -228,6 +247,9 @@ export default function Membership() {
                     letterSpacing: '0.15em',
                     cursor: 'pointer',
                     transition: 'background-color 0.25s ease, color 0.25s ease',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    boxSizing: 'border-box',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = tier.accentColor
@@ -239,7 +261,7 @@ export default function Membership() {
                   }}
                 >
                   {tier.cta}
-                </button>
+                </a>
               </motion.div>
             ))}
           </div>

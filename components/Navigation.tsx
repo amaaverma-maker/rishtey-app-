@@ -83,12 +83,12 @@ export default function Navigation() {
           onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', position: 'relative', zIndex: 1001 }}
         >
-          <RishteyMark size={isMobile ? 32 : 40} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-            <span style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', fontSize: isMobile ? '22px' : '28px', fontWeight: 500, color: '#3D1F14', letterSpacing: '0.03em', lineHeight: 1 }}>
+          <RishteyMark size={isMobile ? 40 : 52} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', fontWeight: 600, fontSize: isMobile ? '20px' : '24px', letterSpacing: '0.03em', color: '#3D1F14', lineHeight: 1 }}>
               Rishtey
             </span>
-            <span style={{ fontFamily: 'var(--font-urbanist), sans-serif', fontWeight: 200, fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.28em', color: 'rgba(220,107,82,0.75)', lineHeight: 1 }}>
+            <span style={{ fontFamily: 'var(--font-urbanist), sans-serif', fontWeight: 400, fontSize: '8px', textTransform: 'uppercase', letterSpacing: '3.5px', color: '#DC6B52', lineHeight: 1 }}>
               Matchmaking
             </span>
           </div>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import MalaThread from './svgs/MalaThread'
 import DiamondDivider from './svgs/DiamondDivider'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const steps = [
   {
@@ -33,7 +34,7 @@ const steps = [
   },
 ]
 
-function StepCard({ step, index }: { step: typeof steps[0]; index: number }) {
+function StepCard({ step, index, isMobile }: { step: typeof steps[0]; index: number; isMobile: boolean }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
@@ -41,8 +42,8 @@ function StepCard({ step, index }: { step: typeof steps[0]; index: number }) {
     <div
       ref={ref}
       style={{
-        minHeight: '280px',
-        padding: '48px 48px 48px 56px',
+        minHeight: isMobile ? 'auto' : '280px',
+        padding: isMobile ? '32px 24px 32px 32px' : '48px 48px 48px 56px',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
@@ -68,10 +69,10 @@ function StepCard({ step, index }: { step: typeof steps[0]; index: number }) {
         style={{
           position: 'absolute',
           top: '20px',
-          right: '40px',
+          right: isMobile ? '20px' : '40px',
           fontFamily: 'var(--font-cormorant), serif',
           fontStyle: 'italic',
-          fontSize: '80px',
+          fontSize: isMobile ? '60px' : '80px',
           fontWeight: 400,
           color: 'rgba(220,107,82,0.2)',
           lineHeight: 1,
@@ -92,9 +93,9 @@ function StepCard({ step, index }: { step: typeof steps[0]; index: number }) {
             fontFamily: 'var(--font-cormorant), serif',
             fontStyle: 'italic',
             fontWeight: 400,
-            fontSize: '40px',
+            fontSize: isMobile ? '34px' : '40px',
             color: '#3D1F14',
-            marginBottom: '16px',
+            marginBottom: '12px',
           }}
         >
           {step.title}
@@ -120,6 +121,7 @@ export default function Process() {
   const [activeStep, setActiveStep] = useState(-1)
   const stepRefs = useRef<(HTMLDivElement | null)[]>([])
   const sectionRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     const observers = stepRefs.current.map((ref, i) => {
@@ -143,7 +145,7 @@ export default function Process() {
         ref={sectionRef}
         style={{
           backgroundColor: '#F9EFE7',
-          minHeight: '100vh',
+          minHeight: isMobile ? 'auto' : '100vh',
           display: 'flex',
           position: 'relative',
         }}
@@ -154,18 +156,19 @@ export default function Process() {
             margin: '0 auto',
             width: '100%',
             display: 'flex',
-            padding: '80px 40px',
+            flexDirection: isMobile ? 'column' : 'row',
+            padding: isMobile ? '60px 24px 80px' : '80px 40px',
             gap: '40px',
           }}
         >
-          {/* Left sticky panel — 40% */}
+          {/* Left panel */}
           <div
             style={{
-              width: '40%',
-              position: 'sticky',
-              top: '120px',
-              alignSelf: 'flex-start',
-              paddingTop: '40px',
+              width: isMobile ? '100%' : '40%',
+              position: isMobile ? 'static' : 'sticky',
+              top: isMobile ? undefined : '120px',
+              alignSelf: isMobile ? undefined : 'flex-start',
+              paddingTop: isMobile ? '0' : '40px',
             }}
           >
             <div
@@ -187,7 +190,7 @@ export default function Process() {
                 fontFamily: 'var(--font-cormorant), serif',
                 fontStyle: 'italic',
                 fontWeight: 400,
-                fontSize: 'clamp(48px, 5vw, 68px)',
+                fontSize: isMobile ? 'clamp(40px, 10vw, 56px)' : 'clamp(48px, 5vw, 68px)',
                 lineHeight: 0.9,
                 color: '#3D1F14',
                 marginBottom: '20px',
@@ -205,7 +208,7 @@ export default function Process() {
                 fontSize: '15px',
                 color: 'rgba(61,31,20,0.6)',
                 lineHeight: 1.7,
-                marginBottom: '48px',
+                marginBottom: isMobile ? '32px' : '48px',
               }}
             >
               No algorithms. No browsing.
@@ -213,18 +216,18 @@ export default function Process() {
               Just a guided, human process.
             </p>
 
-            {/* Mala thread SVG */}
-            <MalaThread activeIndex={activeStep} height={320} />
+            {/* Mala thread SVG — shown on desktop, compact on mobile */}
+            <MalaThread activeIndex={activeStep} height={isMobile ? 180 : 320} />
           </div>
 
-          {/* Right scrollable steps — 60% */}
-          <div style={{ width: '60%' }}>
+          {/* Right scrollable steps */}
+          <div style={{ width: isMobile ? '100%' : '60%' }}>
             {steps.map((step, i) => (
               <div
                 key={step.number}
                 ref={(el) => { stepRefs.current[i] = el }}
               >
-                <StepCard step={step} index={i} />
+                <StepCard step={step} index={i} isMobile={isMobile} />
               </div>
             ))}
           </div>
@@ -232,7 +235,7 @@ export default function Process() {
       </section>
 
       <div style={{ backgroundColor: '#F0E4D8', padding: '12px 0' }}>
-        <DiamondDivider opacity={0.35} color="#DC6B52" count={25} />
+        <DiamondDivider opacity={0.35} color="#DC6B52" count={isMobile ? 12 : 25} />
       </div>
     </>
   )

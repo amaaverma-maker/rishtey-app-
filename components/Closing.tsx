@@ -4,10 +4,12 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import YantraRays from './svgs/YantraRays'
 import DiamondDivider from './svgs/DiamondDivider'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function Closing() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
+  const isMobile = useIsMobile()
 
   return (
     <section
@@ -15,7 +17,7 @@ export default function Closing() {
       ref={ref}
       style={{
         backgroundColor: '#DC6B52',
-        padding: '180px 40px',
+        padding: isMobile ? '100px 24px 120px' : '180px 40px',
         position: 'relative',
         overflow: 'hidden',
         textAlign: 'center',
@@ -31,7 +33,7 @@ export default function Closing() {
           pointerEvents: 'none',
         }}
       >
-        <YantraRays size={600} />
+        <YantraRays size={isMobile ? 360 : 600} />
       </div>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
@@ -44,11 +46,11 @@ export default function Closing() {
             fontFamily: 'var(--font-cormorant), serif',
             fontStyle: 'italic',
             fontWeight: 400,
-            fontSize: 'clamp(56px, 7vw, 96px)',
-            lineHeight: 0.88,
+            fontSize: isMobile ? 'clamp(48px, 13vw, 80px)' : 'clamp(56px, 7vw, 96px)',
+            lineHeight: 0.9,
             color: '#FDF6F0',
             maxWidth: '700px',
-            margin: '0 auto 40px',
+            margin: '0 auto 32px',
           }}
         >
           Your rishta
@@ -64,12 +66,11 @@ export default function Closing() {
           style={{
             fontFamily: 'var(--font-urbanist), sans-serif',
             fontWeight: 300,
-            fontSize: '17px',
+            fontSize: isMobile ? '15px' : '17px',
             color: 'rgba(253,246,240,0.8)',
             lineHeight: 1.7,
-            marginBottom: '48px',
             maxWidth: '480px',
-            margin: '0 auto 48px',
+            margin: '0 auto 40px',
           }}
         >
           Applications are reviewed personally.
@@ -91,7 +92,7 @@ export default function Closing() {
               backgroundColor: '#FDF6F0',
               color: '#3D1F14',
               border: 'none',
-              padding: '16px 48px',
+              padding: isMobile ? '15px 36px' : '16px 48px',
               fontFamily: 'var(--font-urbanist), sans-serif',
               fontWeight: 300,
               fontSize: '11px',
@@ -115,7 +116,7 @@ export default function Closing() {
 
           {/* Diamond divider below button */}
           <div style={{ marginTop: '40px', opacity: 0.3 }}>
-            <DiamondDivider opacity={1} color="#FDF6F0" count={11} />
+            <DiamondDivider opacity={1} color="#FDF6F0" count={isMobile ? 7 : 11} />
           </div>
         </motion.div>
       </div>

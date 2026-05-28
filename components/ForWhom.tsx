@@ -6,6 +6,7 @@ import SareeDrape from './svgs/SareeDrape'
 import LeavesTouch from './svgs/LeavesTouch'
 import GlobeWanderer from './svgs/GlobeWanderer'
 import RangoliDivider from './svgs/RangoliDivider'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const audiences = [
   {
@@ -19,6 +20,7 @@ const audiences = [
     bg: '#F2BDB1',
     bgHover: '#E89585',
     illustration: <SareeDrape width={180} height={220} />,
+    illustrationMobile: <SareeDrape width={120} height={148} />,
   },
   {
     num: '02',
@@ -31,6 +33,7 @@ const audiences = [
     bg: '#F0D8E8',
     bgHover: '#D9A0C0',
     illustration: <LeavesTouch width={180} height={220} />,
+    illustrationMobile: <LeavesTouch width={120} height={148} />,
   },
   {
     num: '03',
@@ -43,6 +46,7 @@ const audiences = [
     bg: '#F9E4B0',
     bgHover: '#E8C060',
     illustration: <GlobeWanderer width={180} height={220} />,
+    illustrationMobile: <GlobeWanderer width={120} height={148} />,
   },
 ]
 
@@ -50,6 +54,7 @@ export default function ForWhom() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const [active, setActive] = useState<number | null>(null)
+  const isMobile = useIsMobile()
 
   return (
     <>
@@ -58,7 +63,7 @@ export default function ForWhom() {
         ref={ref}
         style={{
           backgroundColor: '#FDF6F0',
-          padding: '120px 40px 140px',
+          padding: isMobile ? '80px 20px 100px' : '120px 40px 140px',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -76,7 +81,7 @@ export default function ForWhom() {
             initial={{ opacity: 0, y: 24 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
-            style={{ textAlign: 'center', marginBottom: '80px' }}
+            style={{ textAlign: 'center', marginBottom: isMobile ? '48px' : '80px' }}
           >
             <div style={{
               fontFamily: 'var(--font-urbanist), sans-serif',
@@ -89,7 +94,7 @@ export default function ForWhom() {
             <h2 style={{
               fontFamily: 'var(--font-cormorant), serif',
               fontStyle: 'italic', fontWeight: 400,
-              fontSize: 'clamp(48px, 5.5vw, 72px)',
+              fontSize: isMobile ? 'clamp(40px, 10vw, 60px)' : 'clamp(48px, 5.5vw, 72px)',
               color: '#3D1F14', lineHeight: 1,
               marginBottom: '20px',
             }}>
@@ -105,32 +110,40 @@ export default function ForWhom() {
           {/* Cards */}
           <div style={{
             display: 'flex',
-            gap: '20px',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '16px' : '20px',
             justifyContent: 'center',
             alignItems: 'stretch',
           }}>
             {audiences.map((a, i) => {
-              const isActive = active === i
+              const isActive = isMobile ? (active === i) : (active === i)
               return (
                 <motion.div
                   key={a.title}
                   initial={{ opacity: 0, y: 40 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.7, delay: 0.1 + i * 0.14 }}
-                  onMouseEnter={() => setActive(i)}
-                  onMouseLeave={() => setActive(null)}
+                  onMouseEnter={!isMobile ? () => setActive(i) : undefined}
+                  onMouseLeave={!isMobile ? () => setActive(null) : undefined}
+                  onClick={isMobile ? () => setActive(active === i ? null : i) : undefined}
                   style={{
-                    flex: isActive ? '0 0 420px' : '0 0 300px',
-                    minHeight: '520px',
+                    flex: isMobile ? 'none' : (isActive ? '0 0 420px' : '0 0 300px'),
+                    width: isMobile ? '100%' : undefined,
+                    minHeight: isMobile ? 'auto' : '520px',
                     backgroundColor: isActive ? a.bgHover : a.bg,
                     display: 'flex',
-                    flexDirection: 'column',
-                    padding: '44px 36px 36px',
-                    cursor: 'default',
+                    flexDirection: isMobile ? 'row' : 'column',
+                    padding: isMobile ? '24px 20px' : '44px 36px 36px',
+                    cursor: isMobile ? 'pointer' : 'default',
                     position: 'relative',
                     overflow: 'hidden',
-                    transition: 'flex 0.5s cubic-bezier(0.4,0,0.2,1), background-color 0.4s ease',
+                    transition: isMobile
+                      ? 'background-color 0.4s ease'
+                      : 'flex 0.5s cubic-bezier(0.4,0,0.2,1), background-color 0.4s ease',
                     borderBottom: `4px solid ${isActive ? a.accent : 'transparent'}`,
+                    borderLeft: isMobile ? `4px solid ${isActive ? a.accent : 'transparent'}` : undefined,
+                    alignItems: isMobile ? 'flex-start' : undefined,
+                    gap: isMobile ? '16px' : undefined,
                   }}
                 >
                   {/* Large background number */}
@@ -139,7 +152,7 @@ export default function ForWhom() {
                     top: '-20px',
                     right: '-10px',
                     fontFamily: 'var(--font-cormorant), serif',
-                    fontSize: '160px',
+                    fontSize: isMobile ? '100px' : '160px',
                     fontWeight: 600,
                     color: isActive ? 'rgba(61,31,20,0.07)' : 'rgba(61,31,20,0.05)',
                     lineHeight: 1,
@@ -150,121 +163,152 @@ export default function ForWhom() {
                     {a.num}
                   </div>
 
-                  {/* Small number badge */}
-                  <div style={{
-                    fontFamily: 'var(--font-urbanist), sans-serif',
-                    fontWeight: 200,
-                    fontSize: '10px',
-                    letterSpacing: '0.2em',
-                    color: a.accent,
-                    marginBottom: '28px',
-                    position: 'relative',
-                    zIndex: 1,
-                  }}>
-                    {a.num}
-                  </div>
-
-                  {/* Illustration */}
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    marginBottom: '32px',
-                    position: 'relative',
-                    zIndex: 1,
-                    transform: isActive ? 'scale(1.08)' : 'scale(1)',
-                    transition: 'transform 0.4s ease',
-                  }}>
-                    {a.illustration}
-                  </div>
-
-                  {/* Title */}
-                  <h3 style={{
-                    fontFamily: 'var(--font-cormorant), serif',
-                    fontStyle: 'italic',
-                    fontWeight: 400,
-                    fontSize: isActive ? '38px' : '32px',
-                    color: '#3D1F14',
-                    marginBottom: '14px',
-                    lineHeight: 1.1,
-                    position: 'relative',
-                    zIndex: 1,
-                    transition: 'font-size 0.3s ease',
-                  }}>
-                    {a.title}
-                  </h3>
-
-                  {/* Body */}
-                  <p style={{
-                    fontFamily: 'var(--font-urbanist), sans-serif',
-                    fontWeight: 300,
-                    fontSize: '14px',
-                    color: 'rgba(61,31,20,0.75)',
-                    lineHeight: 1.7,
-                    flex: 1,
-                    position: 'relative',
-                    zIndex: 1,
-                  }}>
-                    {a.body}
-                  </p>
-
-                  {/* Extra line — revealed on hover */}
-                  <div style={{
-                    fontFamily: 'var(--font-cormorant), serif',
-                    fontStyle: 'italic',
-                    fontSize: '16px',
-                    color: 'rgba(61,31,20,0.6)',
-                    lineHeight: 1.5,
-                    marginTop: '16px',
-                    position: 'relative',
-                    zIndex: 1,
-                    maxHeight: isActive ? '60px' : '0',
-                    overflow: 'hidden',
-                    opacity: isActive ? 1 : 0,
-                    transition: 'max-height 0.4s ease, opacity 0.35s ease',
-                  }}>
-                    {a.extra}
-                  </div>
-
-                  {/* Bottom label + arrow */}
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: '28px',
-                    position: 'relative',
-                    zIndex: 1,
-                  }}>
+                  {/* Mobile: illustration on left */}
+                  {isMobile && (
                     <div style={{
-                      fontFamily: 'var(--font-urbanist), sans-serif',
-                      fontWeight: 200,
-                      fontSize: '9px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.18em',
-                      color: a.accent,
-                      maxWidth: '160px',
-                      lineHeight: 1.5,
-                    }}>
-                      {a.label}
-                    </div>
-
-                    {/* Arrow — shown on hover */}
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: a.accent,
+                      flexShrink: 0,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? 'scale(1)' : 'scale(0.6)',
-                      transition: 'opacity 0.3s ease, transform 0.3s ease',
-                      flexShrink: 0,
+                      position: 'relative',
+                      zIndex: 1,
                     }}>
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M3 7h8M7 3l4 4-4 4" stroke="#FDF6F0" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      {a.illustrationMobile}
                     </div>
+                  )}
+
+                  {/* Right content (mobile) or full column (desktop) */}
+                  <div style={{
+                    flex: isMobile ? 1 : undefined,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    zIndex: 1,
+                    minWidth: 0,
+                  }}>
+                    {/* Small number badge */}
+                    <div style={{
+                      fontFamily: 'var(--font-urbanist), sans-serif',
+                      fontWeight: 200,
+                      fontSize: '10px',
+                      letterSpacing: '0.2em',
+                      color: a.accent,
+                      marginBottom: isMobile ? '8px' : '28px',
+                    }}>
+                      {a.num}
+                    </div>
+
+                    {/* Illustration — desktop only */}
+                    {!isMobile && (
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginBottom: '32px',
+                        transform: isActive ? 'scale(1.08)' : 'scale(1)',
+                        transition: 'transform 0.4s ease',
+                      }}>
+                        {a.illustration}
+                      </div>
+                    )}
+
+                    {/* Title */}
+                    <h3 style={{
+                      fontFamily: 'var(--font-cormorant), serif',
+                      fontStyle: 'italic',
+                      fontWeight: 400,
+                      fontSize: isMobile ? '26px' : (isActive ? '38px' : '32px'),
+                      color: '#3D1F14',
+                      marginBottom: isMobile ? '8px' : '14px',
+                      lineHeight: 1.1,
+                      transition: 'font-size 0.3s ease',
+                    }}>
+                      {a.title}
+                    </h3>
+
+                    {/* Body */}
+                    <p style={{
+                      fontFamily: 'var(--font-urbanist), sans-serif',
+                      fontWeight: 300,
+                      fontSize: isMobile ? '13px' : '14px',
+                      color: 'rgba(61,31,20,0.75)',
+                      lineHeight: 1.7,
+                      flex: isMobile ? undefined : 1,
+                    }}>
+                      {a.body}
+                    </p>
+
+                    {/* Extra line — revealed on hover (desktop) or tap (mobile) */}
+                    <div style={{
+                      fontFamily: 'var(--font-cormorant), serif',
+                      fontStyle: 'italic',
+                      fontSize: '15px',
+                      color: 'rgba(61,31,20,0.6)',
+                      lineHeight: 1.5,
+                      marginTop: '12px',
+                      maxHeight: isActive ? '80px' : '0',
+                      overflow: 'hidden',
+                      opacity: isActive ? 1 : 0,
+                      transition: 'max-height 0.4s ease, opacity 0.35s ease',
+                    }}>
+                      {a.extra}
+                    </div>
+
+                    {/* Bottom label — desktop only */}
+                    {!isMobile && (
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: '28px',
+                      }}>
+                        <div style={{
+                          fontFamily: 'var(--font-urbanist), sans-serif',
+                          fontWeight: 200,
+                          fontSize: '9px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.18em',
+                          color: a.accent,
+                          maxWidth: '160px',
+                          lineHeight: 1.5,
+                        }}>
+                          {a.label}
+                        </div>
+
+                        <div style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          backgroundColor: a.accent,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: isActive ? 1 : 0,
+                          transform: isActive ? 'scale(1)' : 'scale(0.6)',
+                          transition: 'opacity 0.3s ease, transform 0.3s ease',
+                          flexShrink: 0,
+                        }}>
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M3 7h8M7 3l4 4-4 4" stroke="#FDF6F0" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Mobile: small label text */}
+                    {isMobile && (
+                      <div style={{
+                        fontFamily: 'var(--font-urbanist), sans-serif',
+                        fontWeight: 200,
+                        fontSize: '9px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.15em',
+                        color: a.accent,
+                        marginTop: '8px',
+                        lineHeight: 1.5,
+                      }}>
+                        {a.label}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )

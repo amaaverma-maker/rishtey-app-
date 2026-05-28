@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 type FormData = {
   fullName: string
@@ -68,7 +69,7 @@ function Field({ label, accent = '#DC6B52', children }: { label: string; accent?
   )
 }
 
-function SectionCard({ title, accent, children }: { title: string; accent: string; children: React.ReactNode }) {
+function SectionCard({ title, accent, isMobile, children }: { title: string; accent: string; isMobile: boolean; children: React.ReactNode }) {
   return (
     <div style={{
       backgroundColor: 'rgba(255,255,255,0.85)',
@@ -76,7 +77,7 @@ function SectionCard({ title, accent, children }: { title: string; accent: strin
       borderRadius: '16px',
       border: `1px solid rgba(0,0,0,0.08)`,
       borderTop: `4px solid ${accent}`,
-      padding: '32px',
+      padding: isMobile ? '24px 20px' : '32px',
       boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
     }}>
       <div style={{
@@ -101,6 +102,7 @@ export default function BiodataForm() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const isMobile = useIsMobile()
 
   const set = (field: keyof FormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -136,12 +138,12 @@ export default function BiodataForm() {
 
   const grid: React.CSSProperties = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-    gap: '20px',
+    gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: isMobile ? '16px' : '20px',
   }
 
   return (
-    <section id="begin" style={{ padding: '60px 40px 100px', position: 'relative' }}>
+    <section id="begin" style={{ padding: isMobile ? '40px 16px 80px' : '60px 40px 100px', position: 'relative' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
@@ -149,7 +151,7 @@ export default function BiodataForm() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          style={{ marginBottom: '40px', textAlign: 'center' }}
+          style={{ marginBottom: isMobile ? '32px' : '40px', textAlign: 'center' }}
         >
           <div style={{
             fontFamily: 'var(--font-urbanist), sans-serif',
@@ -162,14 +164,14 @@ export default function BiodataForm() {
           <h2 style={{
             fontFamily: 'var(--font-cormorant), serif',
             fontStyle: 'italic', fontWeight: 500,
-            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontSize: isMobile ? 'clamp(28px, 8vw, 44px)' : 'clamp(36px, 4vw, 56px)',
             color: '#3D1F14', lineHeight: 1.1, marginBottom: '14px',
           }}>
             Share your biodata with us.
           </h2>
           <p style={{
             fontFamily: 'var(--font-urbanist), sans-serif',
-            fontWeight: 300, fontSize: '15px',
+            fontWeight: 300, fontSize: isMobile ? '14px' : '15px',
             lineHeight: 1.8, color: 'rgba(61,31,20,0.7)',
             maxWidth: '500px', margin: '0 auto',
           }}>
@@ -189,17 +191,16 @@ export default function BiodataForm() {
               borderRadius: '20px',
               border: '1px solid rgba(220,107,82,0.2)',
               borderTop: '4px solid #DC6B52',
-              padding: '64px 48px',
+              padding: isMobile ? '48px 24px' : '64px 48px',
               textAlign: 'center',
               boxShadow: '0 8px 40px rgba(220,107,82,0.12)',
             }}
           >
-            <div style={{
-              fontSize: '48px', marginBottom: '16px',
-            }}>🪔</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🪔</div>
             <div style={{
               fontFamily: 'var(--font-cormorant), serif',
-              fontStyle: 'italic', fontSize: '36px',
+              fontStyle: 'italic',
+              fontSize: isMobile ? '28px' : '36px',
               color: '#3D1F14', marginBottom: '16px',
             }}>
               We have received your biodata.
@@ -218,10 +219,10 @@ export default function BiodataForm() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+            style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}
           >
             {/* Personal Details */}
-            <SectionCard title="Personal Details" accent={SECTION_COLORS[0]}>
+            <SectionCard title="Personal Details" accent={SECTION_COLORS[0]} isMobile={isMobile}>
               <div style={grid}>
                 <Field label="Full Name *" accent={SECTION_COLORS[0]}>
                   <input required type="text" value={form.fullName} onChange={set('fullName')}
@@ -272,7 +273,7 @@ export default function BiodataForm() {
             </SectionCard>
 
             {/* Background */}
-            <SectionCard title="Background" accent={SECTION_COLORS[1]}>
+            <SectionCard title="Background" accent={SECTION_COLORS[1]} isMobile={isMobile}>
               <div style={grid}>
                 <Field label="Religion" accent={SECTION_COLORS[1]}>
                   <input type="text" value={form.religion} onChange={set('religion')}
@@ -286,14 +287,14 @@ export default function BiodataForm() {
                     style={inputBase(SECTION_COLORS[1])}
                     onFocus={(e) => focus(e, SECTION_COLORS[1])} onBlur={blur} />
                 </Field>
-                <Field label="Education" accent={SECTION_COLORS[1]}>
-                  <input type="text" value={form.education} onChange={set('education')}
+                <Field label="Education *" accent={SECTION_COLORS[1]}>
+                  <input required type="text" value={form.education} onChange={set('education')}
                     placeholder="Highest qualification"
                     style={inputBase(SECTION_COLORS[1])}
                     onFocus={(e) => focus(e, SECTION_COLORS[1])} onBlur={blur} />
                 </Field>
-                <Field label="Occupation" accent={SECTION_COLORS[1]}>
-                  <input type="text" value={form.occupation} onChange={set('occupation')}
+                <Field label="Occupation *" accent={SECTION_COLORS[1]}>
+                  <input required type="text" value={form.occupation} onChange={set('occupation')}
                     placeholder="Your current role"
                     style={inputBase(SECTION_COLORS[1])}
                     onFocus={(e) => focus(e, SECTION_COLORS[1])} onBlur={blur} />
@@ -314,8 +315,8 @@ export default function BiodataForm() {
             </SectionCard>
 
             {/* About You */}
-            <SectionCard title="About You" accent={SECTION_COLORS[2]}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <SectionCard title="About You" accent={SECTION_COLORS[2]} isMobile={isMobile}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '20px' }}>
                 <Field label="Interests / A few words about yourself *" accent={SECTION_COLORS[2]}>
                   <textarea required value={form.aboutYou} onChange={set('aboutYou')} rows={4}
                     placeholder="Your interests, personality, values, family background…"
@@ -332,7 +333,7 @@ export default function BiodataForm() {
             </SectionCard>
 
             {/* Contact */}
-            <SectionCard title="Contact" accent={SECTION_COLORS[3]}>
+            <SectionCard title="Contact" accent={SECTION_COLORS[3]} isMobile={isMobile}>
               <div style={grid}>
                 <Field label="Email Address *" accent={SECTION_COLORS[3]}>
                   <input required type="email" value={form.contactEmail} onChange={set('contactEmail')}
@@ -362,13 +363,14 @@ export default function BiodataForm() {
                   fontSize: '13px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
-                  padding: '16px 64px',
+                  padding: isMobile ? '16px 48px' : '16px 64px',
                   border: 'none',
                   borderRadius: '50px',
                   cursor: loading ? 'default' : 'pointer',
                   opacity: loading ? 0.7 : 1,
                   boxShadow: '0 4px 20px rgba(220,107,82,0.35)',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  width: isMobile ? '100%' : 'auto',
                 }}
                 onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(220,107,82,0.45)' } }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(220,107,82,0.35)' }}

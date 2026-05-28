@@ -39,9 +39,9 @@ export default function BiodataPage() {
       }} />
 
       {/* Header */}
-      <header style={{
+      <header className="biodata-header" style={{
         position: 'relative', zIndex: 10,
-        padding: '20px 40px',
+        padding: '16px 40px',
         borderBottom: '1px solid rgba(220,107,82,0.2)',
         display: 'flex',
         alignItems: 'center',
@@ -50,11 +50,11 @@ export default function BiodataPage() {
         backdropFilter: 'blur(12px)',
       }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-          <RishteyMark size={36} />
+          <RishteyMark size={32} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
             <span style={{
               fontFamily: 'var(--font-cormorant), serif',
-              fontStyle: 'italic', fontWeight: 500, fontSize: '24px',
+              fontStyle: 'italic', fontWeight: 500, fontSize: '22px',
               color: '#3D1F14', letterSpacing: '0.03em', lineHeight: 1,
             }}>
               Rishtey
@@ -70,8 +70,8 @@ export default function BiodataPage() {
           </div>
         </a>
 
-        {/* Colourful top-right badge */}
-        <div style={{
+        {/* Badge — hidden on mobile via CSS */}
+        <div className="biodata-badge" style={{
           fontFamily: 'var(--font-urbanist), sans-serif',
           fontWeight: 200, fontSize: '10px',
           textTransform: 'uppercase', letterSpacing: '0.2em',

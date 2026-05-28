@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import MughalArch from './svgs/MughalArch'
 import RangoliDivider from './svgs/RangoliDivider'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const pillars = [
   {
@@ -26,6 +27,7 @@ const pillars = [
 export default function Philosophy() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
+  const isMobile = useIsMobile()
 
   return (
     <>
@@ -37,7 +39,7 @@ export default function Philosophy() {
           position: 'relative',
           overflow: 'hidden',
           clipPath: 'polygon(0 0, 100% 0, 100% 92%, 0 100%)',
-          paddingBottom: '140px',
+          paddingBottom: isMobile ? '100px' : '140px',
         }}
       >
         {/* Background Mughal arch */}
@@ -48,10 +50,10 @@ export default function Philosophy() {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             pointerEvents: 'none',
-            opacity: 1,
+            opacity: isMobile ? 0.6 : 1,
           }}
         >
-          <MughalArch width={500} height={620} />
+          <MughalArch width={isMobile ? 280 : 500} height={isMobile ? 348 : 620} />
         </div>
 
         <div
@@ -60,7 +62,7 @@ export default function Philosophy() {
             zIndex: 1,
             maxWidth: '1100px',
             margin: '0 auto',
-            padding: '160px 40px 0',
+            padding: isMobile ? '80px 24px 0' : '160px 40px 0',
             textAlign: 'center',
           }}
         >
@@ -76,7 +78,7 @@ export default function Philosophy() {
               textTransform: 'uppercase',
               letterSpacing: '0.4em',
               color: '#DC6B52',
-              marginBottom: '40px',
+              marginBottom: isMobile ? '28px' : '40px',
             }}
           >
             The Rishtey Philosophy
@@ -91,8 +93,8 @@ export default function Philosophy() {
               fontFamily: 'var(--font-cormorant), serif',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 'clamp(40px, 5.5vw, 72px)',
-              lineHeight: 1.1,
+              fontSize: isMobile ? 'clamp(28px, 7vw, 44px)' : 'clamp(40px, 5.5vw, 72px)',
+              lineHeight: 1.15,
               color: '#FDF6F0',
               maxWidth: '760px',
               margin: '0 auto 48px',
@@ -111,7 +113,7 @@ export default function Philosophy() {
             style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: '60px',
+              gap: isMobile ? '32px' : '60px',
               flexWrap: 'wrap',
               marginTop: '48px',
             }}
@@ -141,7 +143,7 @@ export default function Philosophy() {
                     fontFamily: 'var(--font-cormorant), serif',
                     fontStyle: 'italic',
                     fontWeight: 400,
-                    fontSize: '28px',
+                    fontSize: isMobile ? '24px' : '28px',
                     color: '#FDF6F0',
                     textAlign: 'center',
                   }}

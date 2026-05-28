@@ -1,13 +1,17 @@
 'use client'
 
+import { useIsMobile } from '../hooks/useIsMobile'
+
 const footerLinks = ['Privacy', 'Terms', 'Contact', 'Press', 'Careers']
 
 export default function Footer() {
+  const isMobile = useIsMobile()
+
   return (
     <footer
       style={{
         backgroundColor: '#6B3525',
-        padding: '48px 40px 36px',
+        padding: isMobile ? '36px 20px 28px' : '48px 40px 36px',
         textAlign: 'center',
       }}
     >
@@ -19,7 +23,7 @@ export default function Footer() {
           fontWeight: 400,
           fontSize: '28px',
           color: '#DC6B52',
-          marginBottom: '28px',
+          marginBottom: '24px',
           letterSpacing: '0.02em',
         }}
       >
@@ -32,24 +36,25 @@ export default function Footer() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '8px',
+          gap: isMobile ? '6px' : '8px',
           flexWrap: 'wrap',
-          marginBottom: '32px',
+          marginBottom: '28px',
         }}
       >
         {footerLinks.map((link, i) => (
-          <span key={link} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span key={link} style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '6px' : '8px' }}>
             <a
               href="#"
               style={{
                 fontFamily: 'var(--font-urbanist), sans-serif',
                 fontWeight: 300,
-                fontSize: '11px',
+                fontSize: isMobile ? '10px' : '11px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.15em',
                 color: 'rgba(253,246,240,0.5)',
                 textDecoration: 'none',
                 transition: 'color 0.2s ease',
+                padding: isMobile ? '6px 2px' : '0',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(253,246,240,0.8)')}
               onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(253,246,240,0.5)')}
@@ -79,6 +84,7 @@ export default function Footer() {
           fontSize: '10px',
           color: 'rgba(253,246,240,0.3)',
           letterSpacing: '0.1em',
+          lineHeight: 1.6,
         }}
       >
         © 2024 Rishtey · All introductions made with care.

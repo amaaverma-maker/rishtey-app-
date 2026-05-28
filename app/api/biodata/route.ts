@@ -74,37 +74,79 @@ export async function POST(request: NextRequest) {
     </div>
   `
 
+  const firstName = fullName?.split(' ')[0] || 'there'
   const confirmationHtml = `
-    <div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #3D1F14;">
-      <div style="background: linear-gradient(135deg, #DC6B52, #C94980); padding: 40px; text-align: center;">
-        <h1 style="color: #FDF6F0; font-style: italic; font-weight: 400; font-size: 32px; margin: 0 0 8px;">
-          Thank you, ${fullName || 'there'}.
+    <div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #3D1F14; background: #FDF6F0;">
+
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #DC6B52 0%, #C94980 100%); padding: 48px 40px 40px; text-align: center;">
+        <p style="color: rgba(253,246,240,0.7); font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; margin: 0 0 16px; font-family: Arial, sans-serif;">Rishtey Matchmaking</p>
+        <div style="font-size: 36px; margin-bottom: 16px;">🪔</div>
+        <h1 style="color: #FDF6F0; font-style: italic; font-weight: 400; font-size: 34px; margin: 0 0 10px; line-height: 1.2;">
+          We're honoured to receive your biodata, ${firstName}.
         </h1>
-        <p style="color: rgba(253,246,240,0.8); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; margin: 0;">
-          Rishtey Matchmaking
+        <p style="color: rgba(253,246,240,0.75); font-size: 15px; margin: 0; line-height: 1.6; font-family: Arial, sans-serif;">
+          Your journey towards a meaningful connection has begun.
         </p>
       </div>
 
-      <div style="padding: 40px; background: #FDF6F0; border: 1px solid rgba(220,107,82,0.2); text-align: center;">
-        <div style="width: 48px; height: 2px; background: #E8960C; margin: 0 auto 28px;"></div>
-        <p style="font-style: italic; font-size: 22px; color: #3D1F14; line-height: 1.6; margin: 0 0 24px;">
-          "We have received your biodata and will be in touch within 48 hours."
+      <!-- Body -->
+      <div style="padding: 48px 40px; background: #FDF6F0; border-left: 1px solid rgba(220,107,82,0.15); border-right: 1px solid rgba(220,107,82,0.15);">
+
+        <p style="font-size: 16px; color: #3D1F14; line-height: 1.9; margin: 0 0 24px; font-family: Arial, sans-serif;">
+          Dear ${firstName},
         </p>
-        <p style="font-size: 14px; color: rgba(61,31,20,0.6); line-height: 1.8; margin: 0 0 32px;">
-          A dedicated Rishtey matchmaker will review your profile personally and reach out to you at <strong>${contactEmail}</strong>.
-          Your information is kept strictly confidential.
+
+        <p style="font-size: 15px; color: rgba(61,31,20,0.75); line-height: 1.9; margin: 0 0 20px; font-family: Arial, sans-serif;">
+          Thank you for trusting Rishtey with something as precious as your story. We have received your biodata and are truly grateful you chose us to be part of this chapter of your life.
         </p>
-        <div style="width: 48px; height: 2px; background: #C94980; margin: 0 auto 32px;"></div>
-        <p style="font-size: 13px; color: rgba(61,31,20,0.4); margin: 0;">
-          In the meantime, if you have any questions feel free to reply to this email.
+
+        <p style="font-size: 15px; color: rgba(61,31,20,0.75); line-height: 1.9; margin: 0 0 32px; font-family: Arial, sans-serif;">
+          A dedicated Rishtey matchmaker will personally review your profile and reach out to you within <strong style="color: #DC6B52;">48 hours</strong>. We take great care in understanding who you are — not just what's on paper, but the person behind it.
+        </p>
+
+        <!-- Divider with diya -->
+        <div style="text-align: center; margin: 32px 0;">
+          <div style="display: inline-block; width: 60px; height: 1px; background: rgba(220,107,82,0.3); vertical-align: middle;"></div>
+          <span style="font-size: 18px; margin: 0 12px;">✦</span>
+          <div style="display: inline-block; width: 60px; height: 1px; background: rgba(220,107,82,0.3); vertical-align: middle;"></div>
+        </div>
+
+        <!-- What to expect -->
+        <div style="background: rgba(220,107,82,0.06); border-left: 3px solid #DC6B52; border-radius: 4px; padding: 24px 28px; margin-bottom: 32px;">
+          <p style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #DC6B52; margin: 0 0 16px; font-family: Arial, sans-serif;">What happens next</p>
+          <ul style="margin: 0; padding: 0; list-style: none; font-family: Arial, sans-serif;">
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
+              ✓ &nbsp;Your matchmaker reviews your biodata with care
+            </li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
+              ✓ &nbsp;We identify compatible profiles from our network
+            </li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
+              ✓ &nbsp;We reach out to you at <strong>${contactEmail}</strong> within 48 hours
+            </li>
+            <li style="font-size: 14px; color: rgba(61,31,20,0.7); line-height: 1.8; padding: 4px 0;">
+              ✓ &nbsp;Every step is kept strictly confidential
+            </li>
+          </ul>
+        </div>
+
+        <p style="font-size: 14px; color: rgba(61,31,20,0.5); line-height: 1.8; margin: 0; font-family: Arial, sans-serif; font-style: italic;">
+          If you have any questions in the meantime, simply reply to this email — we are always here.
+        </p>
+
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #3D1F14; padding: 28px 40px; text-align: center;">
+        <p style="font-style: italic; font-size: 15px; color: rgba(253,246,240,0.7); margin: 0 0 12px; line-height: 1.6;">
+          "Every great love story begins with a single step."
+        </p>
+        <p style="font-size: 11px; color: rgba(253,246,240,0.35); margin: 0; letter-spacing: 0.12em; font-family: Arial, sans-serif;">
+          © ${new Date().getFullYear()} Rishtey Matchmaking &nbsp;·&nbsp; rishtey.us
         </p>
       </div>
 
-      <div style="background: #3D1F14; padding: 24px 40px; text-align: center;">
-        <p style="font-size: 11px; color: rgba(253,246,240,0.4); margin: 0; letter-spacing: 0.1em;">
-          © Rishtey Matchmaking · ${new Date().getFullYear()}
-        </p>
-      </div>
     </div>
   `
 
