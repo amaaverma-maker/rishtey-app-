@@ -12,11 +12,14 @@ export async function POST(request: NextRequest) {
   } = data
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD,
     },
+    tls: { rejectUnauthorized: false },
   })
 
   const html = `
@@ -151,7 +154,7 @@ export async function POST(request: NextRequest) {
   `
 
   try {
-    // Email to rishteycontact@gmail.com with full biodata
+    // Primary email to rishteycontact@gmail.com with full biodata
     await transporter.sendMail({
       from: `"Rishtey" <${process.env.GMAIL_USER}>`,
       to: 'rishteycontact@gmail.com',
@@ -159,22 +162,26 @@ export async function POST(request: NextRequest) {
       subject: `New Biodata — ${fullName || 'Unknown'} (${city || ''}, ${country || ''})`,
       html,
     })
+  } catch (err) {
+    console.error('Biodata email send failed:', err)
+    return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
+  }
 
-    // Confirmation email to the person who submitted
-    if (contactEmail) {
+  // Confirmation email — send separately so a failure here doesn't block the submission
+  if (contactEmail) {
+    try {
       await transporter.sendMail({
         from: `"Rishtey Matchmaking" <${process.env.GMAIL_USER}>`,
         to: contactEmail,
         subject: `We've received your biodata, ${fullName?.split(' ')[0] || 'there'} 🪔`,
         html: confirmationHtml,
       })
+    } catch (err) {
+      console.error('Confirmation email send failed:', err)
     }
-
-    return NextResponse.json({ success: true })
-  } catch (err) {
-    console.error('Email send failed:', err)
-    return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
   }
+
+  return NextResponse.json({ success: true })
 }
 
 function row(label: string, value: string) {
