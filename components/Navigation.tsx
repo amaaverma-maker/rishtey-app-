@@ -7,7 +7,7 @@ import { useIsMobile } from '../hooks/useIsMobile'
 const navLinks = [
   { label: 'Philosophy', href: '#philosophy' },
   { label: 'Process', href: '#process' },
-  { label: 'For Whom', href: '#for-whom' },
+  { label: 'Coaching', href: '#coaching' },
   { label: 'Begin', href: '#begin' },
 ]
 

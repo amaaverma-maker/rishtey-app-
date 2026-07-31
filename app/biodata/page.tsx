@@ -83,7 +83,7 @@ export default function BiodataPage() {
         </div>
       </header>
 
-      {/* Colourful top strip */}
+      {/* Colorful top strip */}
       <div style={{
         position: 'relative', zIndex: 10,
         height: '4px',

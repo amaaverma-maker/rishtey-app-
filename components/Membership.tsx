@@ -19,7 +19,7 @@ const tiers = [
   },
   {
     name: 'Rishtey Signature',
-    urdu: 'A personalised, hands-on matchmaking experience',
+    urdu: 'A personalized, hands-on matchmaking experience',
     accentColor: '#E8960C',
     features: [
       '4 curated introductions',

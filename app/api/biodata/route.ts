@@ -9,11 +9,18 @@ export async function POST(request: NextRequest) {
     fullName, age, gender, religion, caste, motherTongue,
     height, education, occupation, city, country,
     maritalStatus, aboutYou, partnerExpectations,
-    contactEmail, contactPhone,
+    contactEmail, contactPhone, photo,
   } = data
 
   const submittedDate = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
   const firstName = fullName?.split(' ')[0] || 'there'
+
+  const attachment = buildPhotoAttachment(photo, fullName)
+  const photoHtml = attachment
+    ? `<div style="text-align: center; margin-bottom: 32px;">
+         <img src="cid:${PHOTO_CID}" alt="${fullName || 'Applicant'}" style="max-width: 260px; width: 100%; border-radius: 8px; border: 1px solid rgba(220,107,82,0.25);" />
+       </div>`
+    : ''
 
   const biodataHtml = `
     <div style="font-family: Georgia, serif; max-width: 640px; margin: 0 auto; color: #3D1F14;">
@@ -27,6 +34,8 @@ export async function POST(request: NextRequest) {
       </div>
 
       <div style="padding: 40px; background: #FDF6F0; border: 1px solid rgba(220,107,82,0.2);">
+
+        ${photoHtml}
 
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 32px;">
           <tr><td colspan="2" style="padding: 0 0 12px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #DC6B52; border-bottom: 1px solid rgba(220,107,82,0.2);">Personal Details</td></tr>
@@ -99,6 +108,9 @@ ${partnerExpectations || '—'}
 CONTACT
 Email: ${contactEmail || '—'}
 Phone: ${contactPhone || '—'}
+
+PHOTO
+${attachment ? `Attached — ${attachment.filename}` : 'Not provided'}
   `.trim()
 
   const confirmationHtml = `
@@ -107,10 +119,10 @@ Phone: ${contactPhone || '—'}
       <div style="background: linear-gradient(135deg, #DC6B52 0%, #C94980 100%); padding: 48px 40px 40px; text-align: center;">
         <p style="color: rgba(253,246,240,0.7); font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; margin: 0 0 16px; font-family: Arial, sans-serif;">Rishtey Matchmaking</p>
         <h1 style="color: #FDF6F0; font-style: italic; font-weight: 400; font-size: 34px; margin: 0 0 10px; line-height: 1.2;">
-          We are honoured to receive your biodata, ${firstName}.
+          We are honored to receive your biodata, ${firstName}.
         </h1>
         <p style="color: rgba(253,246,240,0.75); font-size: 15px; margin: 0; line-height: 1.6; font-family: Arial, sans-serif;">
-          Your journey towards a meaningful connection has begun.
+          Your journey toward a meaningful connection has begun.
         </p>
       </div>
 
@@ -181,23 +193,25 @@ rishtey.us
   `.trim()
 
   // Send biodata to the Rishtey team
-  const { error: biodataError } = await resend.emails.send({
+  const { data: biodataSent, error: biodataError } = await resend.emails.send({
     from: 'Rishtey Matchmaking <hello@rishtey.us>',
     to: 'rishteycontact@gmail.com',
     replyTo: contactEmail || undefined,
     subject: `New Biodata — ${fullName || 'Unknown'} (${city || ''}, ${country || ''})`,
     html: biodataHtml,
     text: biodataText,
+    attachments: attachment ? [attachment] : undefined,
   })
 
   if (biodataError) {
     console.error('Biodata email failed:', biodataError)
     return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
   }
+  console.log('Biodata email sent:', { id: biodataSent?.id, photoAttached: Boolean(attachment) })
 
   // Send confirmation to the applicant — failure here does not block the submission
   if (contactEmail) {
-    const { error: confirmError } = await resend.emails.send({
+    const { data: confirmSent, error: confirmError } = await resend.emails.send({
       from: 'Rishtey Matchmaking <hello@rishtey.us>',
       to: contactEmail,
       replyTo: 'rishteycontact@gmail.com',
@@ -207,10 +221,50 @@ rishtey.us
     })
     if (confirmError) {
       console.error('Confirmation email failed:', confirmError)
+    } else {
+      console.log('Confirmation email sent:', { id: confirmSent?.id, to: contactEmail })
     }
   }
 
   return NextResponse.json({ success: true })
+}
+
+const PHOTO_CID = 'applicant-photo'
+const MAX_PHOTO_BYTES = 12 * 1024 * 1024
+
+const EXTENSIONS: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/heic': 'heic',
+  'image/heif': 'heif',
+  'image/gif': 'gif',
+}
+
+type Photo = { name?: string; type?: string; dataUrl?: string }
+
+// The photo arrives as a base64 data URL in the JSON payload. Anything we cannot
+// read as an image is silently dropped — a bad photo must not lose a submission.
+// `contentId` makes Resend send it inline so it also renders inside the email.
+function buildPhotoAttachment(photo: Photo | undefined, fullName: string) {
+  if (!photo?.dataUrl) return null
+
+  const match = /^data:(image\/[a-z0-9.+-]+);base64,(.+)$/i.exec(photo.dataUrl)
+  if (!match) return null
+
+  const [, contentType, base64] = match
+  const content = Buffer.from(base64, 'base64')
+  if (content.length === 0 || content.length > MAX_PHOTO_BYTES) return null
+
+  const extension = EXTENSIONS[contentType.toLowerCase()] || 'jpg'
+  const safeName = (fullName || 'applicant').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase()
+
+  return {
+    filename: `${safeName || 'applicant'}-photo.${extension}`,
+    content: base64,
+    contentType,
+    contentId: PHOTO_CID,
+  }
 }
 
 function row(label: string, value: string) {

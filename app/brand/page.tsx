@@ -32,7 +32,7 @@ export default function BrandPage() {
             Brand Assets
           </h1>
           <p style={{ fontFamily: 'Arial, sans-serif', fontSize: '14px', color: 'rgba(253,246,240,0.55)', margin: 0, letterSpacing: '0.04em' }}>
-            Download logos and colours for use across social media and communications.
+            Download logos and colors for use across social media and communications.
           </p>
         </div>
       </div>
@@ -115,9 +115,9 @@ export default function BrandPage() {
           </div>
         </section>
 
-        {/* Colours */}
+        {/* Colors */}
         <section style={{ marginBottom: '64px' }}>
-          <h2 style={{ fontStyle: 'italic', fontWeight: 400, fontSize: '28px', color: '#3D1F14', marginBottom: '8px' }}>Brand colours</h2>
+          <h2 style={{ fontStyle: 'italic', fontWeight: 400, fontSize: '28px', color: '#3D1F14', marginBottom: '8px' }}>Brand colors</h2>
           <p style={{ fontFamily: 'Arial, sans-serif', fontSize: '13px', color: 'rgba(61,31,20,0.5)', marginBottom: '32px' }}>
             Use these exact hex values to stay consistent across all platforms.
           </p>

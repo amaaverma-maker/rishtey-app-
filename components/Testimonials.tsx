@@ -90,7 +90,7 @@ export default function Testimonials() {
                 lineHeight: 1.1,
               }}
             >
-              Unions we have had the honour of weaving.
+              Unions we have had the honor of weaving.
             </h2>
           </motion.div>
 

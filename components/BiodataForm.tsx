@@ -4,6 +4,12 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
 
+type Photo = {
+  name: string
+  type: string
+  dataUrl: string
+}
+
 type FormData = {
   fullName: string
   age: string
@@ -31,6 +37,45 @@ const initialData: FormData = {
 }
 
 const SECTION_COLORS = ['#DC6B52', '#C94980', '#E8960C', '#1A7B8A']
+
+const MAX_PHOTO_BYTES = 10 * 1024 * 1024 // what we accept from the file picker
+const MAX_PHOTO_DIMENSION = 1400 // photos are downscaled before they are emailed
+
+function readAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+}
+
+// Downscale to keep the emailed attachment small. Formats the browser cannot
+// decode (HEIC on non-Safari, for instance) fall back to the original file.
+async function compressPhoto(file: File): Promise<string> {
+  const original = await readAsDataUrl(file)
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image()
+      el.onload = () => resolve(el)
+      el.onerror = () => reject(new Error('decode failed'))
+      el.src = original
+    })
+
+    const scale = Math.min(1, MAX_PHOTO_DIMENSION / Math.max(img.width, img.height))
+    if (scale === 1 && file.size <= 1.5 * 1024 * 1024) return original
+
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(img.width * scale)
+    canvas.height = Math.round(img.height * scale)
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return original
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    return canvas.toDataURL('image/jpeg', 0.85)
+  } catch {
+    return original
+  }
+}
 
 function inputBase(accent = '#DC6B52'): React.CSSProperties {
   return {
@@ -99,10 +144,39 @@ function SectionCard({ title, accent, isMobile, children }: { title: string; acc
 
 export default function BiodataForm() {
   const [form, setForm] = useState<FormData>(initialData)
+  const [photo, setPhoto] = useState<Photo | null>(null)
+  const [photoError, setPhotoError] = useState('')
+  const [photoLoading, setPhotoLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const isMobile = useIsMobile()
+
+  const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-picking the same file after removing it
+    if (!file) return
+
+    setPhotoError('')
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Please choose an image file (JPG, PNG or HEIC).')
+      return
+    }
+    if (file.size > MAX_PHOTO_BYTES) {
+      setPhotoError('That photo is larger than 10 MB. Please choose a smaller one.')
+      return
+    }
+
+    setPhotoLoading(true)
+    try {
+      const dataUrl = await compressPhoto(file)
+      setPhoto({ name: file.name, type: file.type, dataUrl })
+    } catch {
+      setPhotoError('We could not read that photo. Please try another one.')
+    } finally {
+      setPhotoLoading(false)
+    }
+  }
 
   const set = (field: keyof FormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -125,7 +199,7 @@ export default function BiodataForm() {
       const res = await fetch('/api/biodata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, photo }),
       })
       if (res.ok) setSubmitted(true)
       else setError('Something went wrong. Please try again or email us directly.')
@@ -268,6 +342,97 @@ export default function BiodataForm() {
                     placeholder="e.g. Hindi, Punjabi, Tamil…"
                     style={inputBase(SECTION_COLORS[0])}
                     onFocus={(e) => focus(e, SECTION_COLORS[0])} onBlur={blur} />
+                </Field>
+              </div>
+
+              {/* Photo */}
+              <div style={{ marginTop: isMobile ? '16px' : '20px' }}>
+                <Field label="Photo (optional)" accent={SECTION_COLORS[0]}>
+                  {photo ? (
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: '16px',
+                      backgroundColor: '#ffffff',
+                      border: '1.5px solid rgba(0,0,0,0.12)',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                    }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photo.dataUrl}
+                        alt="Your uploaded photo"
+                        style={{
+                          width: '72px', height: '72px', objectFit: 'cover',
+                          borderRadius: '8px', flexShrink: 0,
+                          border: `1px solid ${SECTION_COLORS[0]}33`,
+                        }}
+                      />
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{
+                          fontFamily: 'var(--font-urbanist), sans-serif',
+                          fontWeight: 400, fontSize: '14px', color: '#1a1a1a',
+                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        }}>
+                          {photo.name}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { setPhoto(null); setPhotoError('') }}
+                          style={{
+                            marginTop: '4px', padding: 0, background: 'none', border: 'none',
+                            fontFamily: 'var(--font-urbanist), sans-serif',
+                            fontWeight: 400, fontSize: '12px', letterSpacing: '0.08em',
+                            textTransform: 'uppercase', color: '#C94980', cursor: 'pointer',
+                          }}
+                        >
+                          Remove photo
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <label
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        gap: '10px',
+                        backgroundColor: '#ffffff',
+                        border: `1.5px dashed ${SECTION_COLORS[0]}66`,
+                        borderRadius: '8px',
+                        padding: isMobile ? '20px 16px' : '24px 16px',
+                        cursor: photoLoading ? 'default' : 'pointer',
+                        textAlign: 'center',
+                        transition: 'border-color 0.2s ease, background-color 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = SECTION_COLORS[0]; e.currentTarget.style.backgroundColor = `${SECTION_COLORS[0]}08` }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${SECTION_COLORS[0]}66`; e.currentTarget.style.backgroundColor = '#ffffff' }}
+                    >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhoto}
+                        disabled={photoLoading}
+                        style={{
+                          position: 'absolute', width: '1px', height: '1px',
+                          padding: 0, margin: '-1px', overflow: 'hidden',
+                          clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0,
+                        }}
+                      />
+                      <span style={{ fontSize: '18px', lineHeight: 1 }}>📷</span>
+                      <span style={{
+                        fontFamily: 'var(--font-urbanist), sans-serif',
+                        fontWeight: 400, fontSize: '14px', color: 'rgba(61,31,20,0.65)',
+                      }}>
+                        {photoLoading ? 'Preparing your photo…' : 'Tap to upload a recent photo'}
+                      </span>
+                    </label>
+                  )}
+
+                  <p style={{
+                    fontFamily: 'var(--font-urbanist), sans-serif',
+                    fontWeight: 300, fontSize: '12px',
+                    color: photoError ? '#C94980' : 'rgba(61,31,20,0.5)',
+                    letterSpacing: '0.03em',
+                  }}>
+                    {photoError || 'JPG, PNG or HEIC · up to 10 MB · shared only with your matchmaker'}
+                  </p>
                 </Field>
               </div>
             </SectionCard>
