@@ -205,7 +205,14 @@ rishtey.us
 
   if (biodataError) {
     console.error('Biodata email failed:', biodataError)
-    return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to send email',
+      // TEMPORARY diagnostic — remove once delivery is confirmed
+      detail: biodataError.message,
+      name: biodataError.name,
+      hasKey: Boolean(process.env.RESEND_API_KEY),
+    }, { status: 500 })
   }
   console.log('Biodata email sent:', { id: biodataSent?.id, photoAttached: Boolean(attachment) })
 
